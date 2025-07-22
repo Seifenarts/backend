@@ -1,4 +1,4 @@
-package de.seifenarts.domain.repository;
+package de.seifenarts.repository;
 
 import de.seifenarts.domain.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
