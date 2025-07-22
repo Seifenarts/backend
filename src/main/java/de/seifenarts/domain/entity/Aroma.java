@@ -22,4 +22,9 @@ public class Aroma {
     @NotBlank(message = "Title can't be blank.")
     private String title;
 
+    @Override
+    public String toString() {
+        return String.format("Aroma: id - %d, title - %s", id, title);
+    }
+
 }
