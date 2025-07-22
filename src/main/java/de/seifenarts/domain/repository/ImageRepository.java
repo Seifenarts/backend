@@ -1,0 +1,7 @@
+package de.seifenarts.domain.repository;
+
+import de.seifenarts.domain.entity.Image;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ImageRepository extends JpaRepository<Image, Long> {
+}
