@@ -1,11 +1,15 @@
 package de.seifenarts.service;
 
 import de.seifenarts.domain.dto.product_dto.request_dto.ProductRequestDto;
+import de.seifenarts.domain.dto.product_dto.respons_dto.ProductResponsDTO;
 import de.seifenarts.domain.entity.Image;
 import de.seifenarts.domain.entity.Product;
 import de.seifenarts.repository.ProductRepository;
 import de.seifenarts.service.interfaces.ProductService;
 import de.seifenarts.service.mapping.ProductMappingService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -16,11 +20,13 @@ import java.util.stream.Collectors;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository repository;
+    @Autowired
+    private final ProductRepository productRepository;
+    @Autowired
     private final ProductMappingService productMappingService;
 
-    public ProductServiceImpl(ProductRepository repository, ProductMappingService mappingService) {
-        this.repository = repository;
+    public ProductServiceImpl(ProductRepository productRepository, ProductMappingService mappingService) {
+        this.productRepository = productRepository;
         this.productMappingService = mappingService;
     }
 
@@ -28,7 +34,7 @@ public class ProductServiceImpl implements ProductService {
     public Long addNewProduct(ProductRequestDto productRequestDto) {
         Product product = productMappingService.mapRequestDtoToEntity(productRequestDto);
 
-        Product savedProduct = repository.save(product);
+        Product savedProduct = productRepository.save(product);
 
         if (productRequestDto.getImages() != null) {
             //пока локально храним images. Надо вынести в ImageService
@@ -52,9 +58,15 @@ public class ProductServiceImpl implements ProductService {
             }).collect(Collectors.toSet());
 
             savedProduct.getImages().addAll(images);
-            repository.save(savedProduct);
+            productRepository.save(savedProduct);
         }
 
         return savedProduct.getId();
+    }
+
+    @Override
+    public Page<ProductResponsDTO> getAllActiveProducts (Pageable pageable) {
+    return productRepository.findAllActiveProducts(pageable)
+            .map(productMappingService::mapEntityToProductResponsDTO);
     }
 }

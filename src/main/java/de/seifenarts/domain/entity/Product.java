@@ -65,8 +65,12 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Image> images = new HashSet<>();
 
+    @NotNull
+    @Column(name = "active", columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean active = true;
+
     @Override
     public String toString() {
-        return String.format("Product: id - %d, title - %s, price - %.2f, size - %s, deliveryPrice - %.2f, shortDescription - %s, fullDescription - %s, composition - %s", id, title, price, size, deliveryPrice, shortDescription, fullDescription, composition);
+        return String.format("Product: id - %d, title - %s, price - %.2f, size - %s, deliveryPrice - %.2f, shortDescription - %s, fullDescription - %s, composition - %s, active - %s", id, title, price, size, deliveryPrice, shortDescription, fullDescription, composition, active ? "Yes" : "No");
     }
 }

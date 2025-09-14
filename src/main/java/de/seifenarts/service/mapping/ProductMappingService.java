@@ -1,5 +1,6 @@
 package de.seifenarts.service.mapping;
 import de.seifenarts.domain.dto.product_dto.request_dto.ProductRequestDto;
+import de.seifenarts.domain.dto.product_dto.respons_dto.ProductResponsDTO;
 import de.seifenarts.domain.entity.Image;
 import de.seifenarts.domain.entity.Product;
 import org.mapstruct.AfterMapping;
@@ -19,5 +20,10 @@ public interface ProductMappingService {
     @Mapping(target = "aromas", ignore = true)
     @Mapping(target = "images", ignore = true)
     Product mapRequestDtoToEntity(ProductRequestDto dto);
+
+    @Mapping(target = "aromas", ignore = true)
+    @Mapping(target = "imageUrls", ignore = true)
+    ProductResponsDTO mapEntityToProductResponsDTO(Product product);
 }
+
 

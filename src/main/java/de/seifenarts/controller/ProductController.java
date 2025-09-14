@@ -1,8 +1,12 @@
 package de.seifenarts.controller;
 
 import de.seifenarts.domain.dto.product_dto.request_dto.ProductRequestDto;
+import de.seifenarts.domain.dto.product_dto.respons_dto.ProductResponsDTO;
 import de.seifenarts.service.interfaces.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,5 +30,14 @@ public class ProductController {
         }
 
         return productService.addNewProduct(productRequestDto);
+    }
+
+    @GetMapping("/all")
+    public Page<ProductResponsDTO> getAllActiveProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productService.getAllActiveProducts(pageable);
     }
 }
