@@ -40,4 +40,15 @@ public class ProductController {
         Pageable pageable = PageRequest.of(page, size);
         return productService.getAllActiveProducts(pageable);
     }
+
+    @GetMapping("/{id}")
+    public ProductResponsDTO getProductById (@PathVariable("id") Long productId) {
+        return productService.getProductById(productId);
+    }
+
+    @PatchMapping("/{id}")
+    public ProductResponsDTO toggleProductStatus(@PathVariable("id") Long productId) {
+        return productService.setProductActiveStatus(productId);
+    }
+
 }

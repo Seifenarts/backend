@@ -65,8 +65,27 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductResponsDTO> getAllActiveProducts (Pageable pageable) {
-    return productRepository.findAllActiveProducts(pageable)
-            .map(productMappingService::mapEntityToProductResponsDTO);
+    public Page<ProductResponsDTO> getAllActiveProducts(Pageable pageable) {
+        return productRepository.findAllActiveProducts(pageable)
+                .map(productMappingService::mapEntityToProductResponsDTO);
+    }
+
+    @Override
+    public ProductResponsDTO getProductById(Long productId) {
+        return productRepository.findById(productId)
+                .map(productMappingService::mapEntityToProductResponsDTO)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+    }
+
+    @Override
+    public ProductResponsDTO setProductActiveStatus(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        product.setActive(!product.isActive());
+
+        Product updatedProduct = productRepository.save(product);
+
+        return productMappingService.mapEntityToProductResponsDTO(updatedProduct);
     }
 }
