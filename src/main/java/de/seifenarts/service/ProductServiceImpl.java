@@ -31,7 +31,7 @@ public class ProductServiceImpl implements ProductService {
         Product savedProduct = repository.save(product);
 
         if (productRequestDto.getImages() != null) {
-            //пока локально храним image. Надо вынести в ImageService
+            //пока локально храним images. Надо вынести в ImageService
             Set<Image> images = productRequestDto.getImages().stream().map(file -> {
                 try {
                     String uploadDir = System.getProperty("user.dir") + "/uploads/";

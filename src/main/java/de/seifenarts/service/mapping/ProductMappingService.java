@@ -15,9 +15,6 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface ProductMappingService {
 
-//    @Autowired
-//    protected AromaService aromaService;
-
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "aromas", ignore = true)
     @Mapping(target = "images", ignore = true)
