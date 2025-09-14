@@ -15,7 +15,6 @@ logs/
 # === Environment & secrets ===
 .env
 *.env
-.env.*
 
 # === Node modules ===
 node_modules/

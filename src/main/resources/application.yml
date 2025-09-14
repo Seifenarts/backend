@@ -4,8 +4,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://localhost:5432/seifenarts
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    username: username
+    password: 1234
     driver-class-name: org.postgresql.Driver
 
   jpa:
