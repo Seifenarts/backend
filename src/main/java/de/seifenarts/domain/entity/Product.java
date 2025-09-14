@@ -19,7 +19,7 @@ public class Product {
 
     @Id
     @Setter(AccessLevel.NONE)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
@@ -27,7 +27,7 @@ public class Product {
     @Column(name = "title")
     private String title;
 
-    @NotNull
+
     @Column(name = "price")
     private BigDecimal price;
 
