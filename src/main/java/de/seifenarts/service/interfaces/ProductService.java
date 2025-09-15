@@ -1,8 +1,7 @@
 package de.seifenarts.service.interfaces;
 
 import de.seifenarts.domain.dto.product_dto.request_dto.ProductRequestDto;
-import de.seifenarts.domain.dto.product_dto.respons_dto.ProductResponsDTO;
-import de.seifenarts.domain.entity.Product;
+import de.seifenarts.domain.dto.product_dto.respons_dto.ProductResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -12,8 +11,10 @@ public interface ProductService {
 
     Page getAllActiveProducts(Pageable pageable);
 
-    ProductResponsDTO getProductById (Long productId);
+    ProductResponseDTO getProductById (Long productId);
 
-    ProductResponsDTO setProductActiveStatus (Long productId);
+    ProductResponseDTO setProductActiveStatus (Long productId);
+
+    ProductResponseDTO updateProduct (Long productId, ProductRequestDto productRequestDto);
 
 }

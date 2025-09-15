@@ -1,7 +1,7 @@
 package de.seifenarts.controller;
 
 import de.seifenarts.domain.dto.product_dto.request_dto.ProductRequestDto;
-import de.seifenarts.domain.dto.product_dto.respons_dto.ProductResponsDTO;
+import de.seifenarts.domain.dto.product_dto.respons_dto.ProductResponseDTO;
 import de.seifenarts.service.interfaces.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,7 +33,7 @@ public class ProductController {
     }
 
     @GetMapping("/all")
-    public Page<ProductResponsDTO> getAllActiveProducts(
+    public Page<ProductResponseDTO> getAllActiveProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "9") int size
     ) {
@@ -42,13 +42,18 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ProductResponsDTO getProductById (@PathVariable("id") Long productId) {
+    public ProductResponseDTO getProductById (@PathVariable("id") Long productId) {
         return productService.getProductById(productId);
     }
 
     @PatchMapping("/{id}")
-    public ProductResponsDTO toggleProductStatus(@PathVariable("id") Long productId) {
+    public ProductResponseDTO toggleProductStatus(@PathVariable("id") Long productId) {
         return productService.setProductActiveStatus(productId);
+    }
+
+    @PutMapping("{id}")
+    public ProductResponseDTO updateProduct(@PathVariable("id") Long productId, @RequestBody ProductRequestDto dto) {
+        return productService.updateProduct(productId, dto);
     }
 
 }
