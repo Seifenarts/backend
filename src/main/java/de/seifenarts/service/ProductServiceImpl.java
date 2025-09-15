@@ -1,11 +1,16 @@
 package de.seifenarts.service;
 
 import de.seifenarts.domain.dto.product_dto.request_dto.ProductRequestDto;
+import de.seifenarts.domain.dto.product_dto.respons_dto.ProductResponseDTO;
 import de.seifenarts.domain.entity.Image;
 import de.seifenarts.domain.entity.Product;
 import de.seifenarts.repository.ProductRepository;
 import de.seifenarts.service.interfaces.ProductService;
 import de.seifenarts.service.mapping.ProductMappingService;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -16,11 +21,13 @@ import java.util.stream.Collectors;
 @Service
 public class ProductServiceImpl implements ProductService {
 
-    private final ProductRepository repository;
+    @Autowired
+    private final ProductRepository productRepository;
+    @Autowired
     private final ProductMappingService productMappingService;
 
-    public ProductServiceImpl(ProductRepository repository, ProductMappingService mappingService) {
-        this.repository = repository;
+    public ProductServiceImpl(ProductRepository productRepository, ProductMappingService mappingService) {
+        this.productRepository = productRepository;
         this.productMappingService = mappingService;
     }
 
@@ -28,7 +35,7 @@ public class ProductServiceImpl implements ProductService {
     public Long addNewProduct(ProductRequestDto productRequestDto) {
         Product product = productMappingService.mapRequestDtoToEntity(productRequestDto);
 
-        Product savedProduct = repository.save(product);
+        Product savedProduct = productRepository.save(product);
 
         if (productRequestDto.getImages() != null) {
             //пока локально храним images. Надо вынести в ImageService
@@ -52,9 +59,73 @@ public class ProductServiceImpl implements ProductService {
             }).collect(Collectors.toSet());
 
             savedProduct.getImages().addAll(images);
-            repository.save(savedProduct);
+            productRepository.save(savedProduct);
         }
 
         return savedProduct.getId();
+    }
+
+    @Override
+    @Transactional
+    public ProductResponseDTO updateProduct(Long productId, ProductRequestDto dto) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        if (dto.getTitle() != null && !dto.getTitle().isBlank()) {
+            product.setTitle(dto.getTitle());
+        }
+        if (dto.getPrice() != null) {
+            product.setPrice(dto.getPrice());
+        }
+        if (dto.getSize() != null) {
+            product.setSize(dto.getSize());
+        }
+        if (dto.getDeliveryPrice() != null) {
+            product.setDeliveryPrice(dto.getDeliveryPrice());
+        }
+        if (dto.getShortDescription() != null && !dto.getShortDescription().isBlank()) {
+            product.setShortDescription(dto.getShortDescription());
+        }
+        if (dto.getFullDescription() != null && !dto.getFullDescription().isBlank()) {
+            product.setFullDescription(dto.getFullDescription());
+        }
+        if (dto.getComposition() != null && !dto.getComposition().isBlank()) {
+            product.setComposition(dto.getComposition());
+        }
+
+        //TODO update Aroma and Image
+//        Set<Aroma> aromas = aromaRepository.findAllById(dto.getAromaIds())
+//                .stream()
+//                .collect(Collectors.toSet());
+//        product.setAromas(aromas);
+
+        Product updatedProduct = productRepository.save(product);
+
+        return productMappingService.mapEntityToProductResponsDTO(updatedProduct);
+    }
+
+    @Override
+    public Page<ProductResponseDTO> getAllActiveProducts(Pageable pageable) {
+        return productRepository.findAllActiveProducts(pageable)
+                .map(productMappingService::mapEntityToProductResponsDTO);
+    }
+
+    @Override
+    public ProductResponseDTO getProductById(Long productId) {
+        return productRepository.findById(productId)
+                .map(productMappingService::mapEntityToProductResponsDTO)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+    }
+
+    @Override
+    public ProductResponseDTO setProductActiveStatus(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        product.setActive(!product.isActive());
+
+        Product updatedProduct = productRepository.save(product);
+
+        return productMappingService.mapEntityToProductResponsDTO(updatedProduct);
     }
 }
