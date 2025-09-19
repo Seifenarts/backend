@@ -62,7 +62,7 @@ public class Product {
     private Set<Aroma> aromas = new HashSet<>();
 
     @NotNull
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Image> images = new HashSet<>();
 
     @NotNull
