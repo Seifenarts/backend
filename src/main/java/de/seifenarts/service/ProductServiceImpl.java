@@ -4,17 +4,21 @@ import de.seifenarts.domain.dto.product_dto.request_dto.ProductRequestDto;
 import de.seifenarts.domain.dto.product_dto.respons_dto.ProductResponseDTO;
 import de.seifenarts.domain.entity.Image;
 import de.seifenarts.domain.entity.Product;
+import de.seifenarts.repository.ImageRepository;
 import de.seifenarts.repository.ProductRepository;
 import de.seifenarts.service.interfaces.ProductService;
 import de.seifenarts.service.mapping.ProductMappingService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,10 +29,13 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     @Autowired
     private final ProductMappingService productMappingService;
+    @Autowired
+    private final ImageRepository imageRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository, ProductMappingService mappingService) {
+    public ProductServiceImpl(ProductRepository productRepository, ProductMappingService mappingService, ImageRepository imageRepository) {
         this.productRepository = productRepository;
         this.productMappingService = mappingService;
+        this.imageRepository = imageRepository;
     }
 
     @Override
@@ -106,15 +113,35 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductResponseDTO> getAllActiveProducts(Pageable pageable) {
-        return productRepository.findAllActiveProducts(pageable)
-                .map(productMappingService::mapEntityToProductResponsDTO);
+        Page<Product> productsPage = productRepository.findAllActiveProducts(pageable);
+        List<Long> productIds = productsPage.stream()
+                .map(Product::getId)
+                .toList();
+
+        Map<Long, List<String>> imagesMap = imageRepository.findAllByProductIdIn(productIds).stream()
+                .collect(Collectors.groupingBy(
+                        image -> image.getProduct().getId(),
+                        Collectors.mapping(Image::getImageUrl, Collectors.toList())
+                ));
+
+        List<ProductResponseDTO> dtoList = productsPage.stream()
+                .map(product -> {
+                    ProductResponseDTO dto = productMappingService.mapEntityToProductResponsDTO(product);
+                    dto.setImageUrls(imagesMap.getOrDefault(product.getId(), List.of()));
+                    return dto;
+                })
+                .toList();
+
+        return new PageImpl<>(dtoList, pageable, productsPage.getTotalElements());
     }
+
 
     @Override
     public ProductResponseDTO getProductById(Long productId) {
         return productRepository.findById(productId)
                 .map(productMappingService::mapEntityToProductResponsDTO)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+
     }
 
     @Override

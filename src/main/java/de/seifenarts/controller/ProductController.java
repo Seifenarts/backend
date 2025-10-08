@@ -35,7 +35,7 @@ public class ProductController {
     @GetMapping("/all")
     public Page<ProductResponseDTO> getAllActiveProducts(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "9") int size
+            @RequestParam(defaultValue = "8") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
         return productService.getAllActiveProducts(pageable);
