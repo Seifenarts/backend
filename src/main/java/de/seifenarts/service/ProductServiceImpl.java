@@ -138,10 +138,19 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponseDTO getProductById(Long productId) {
-        return productRepository.findById(productId)
-                .map(productMappingService::mapEntityToProductResponsDTO)
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
 
+        ProductResponseDTO dto = productMappingService.mapEntityToProductResponsDTO(product);
+
+        List<String> imageUrls = imageRepository.findAllByProductIdIn(List.of(product.getId()))
+                .stream()
+                .map(Image::getImageUrl)
+                .toList();
+
+        dto.setImageUrls(imageUrls);
+
+        return dto;
     }
 
     @Override
