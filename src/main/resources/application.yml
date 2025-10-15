@@ -3,9 +3,9 @@ spring:
     name: SeifenArts
 
   datasource:
-    url: jdbc:postgresql://${RAILWAY_PRIVATE_DOMAIN:postgres.railway.internal}:${PGPORT:5432}/${POSTGRES_DB:railway}
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:1234}
+    url: jdbc:postgresql://${RAILWAY_PRIVATE_DOMAIN}:${PGPORT}/${POSTGRES_DB}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
