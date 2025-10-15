@@ -3,9 +3,9 @@ spring:
     name: SeifenArts
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/seifenarts
-    username: username
-    password: 1234
+    url: jdbc:postgresql://${RAILWAY_PRIVATE_DOMAIN:postgres.railway.internal}:${PGPORT:5432}/${POSTGRES_DB:railway}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:1234}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -16,3 +16,4 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
