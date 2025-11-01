@@ -56,4 +56,10 @@ public class ProductController {
         return productService.updateProduct(productId, dto);
     }
 
+    @GetMapping("/recommended/{id}")
+    public List<ProductResponseDTO> getRecommendedProducts(@PathVariable("id") Long productId) {
+        // просто передаём productId в сервис
+        return productService.getRecommendedProducts(productId);
+    }
+
 }

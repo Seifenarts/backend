@@ -19,8 +19,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -121,7 +125,7 @@ public class ProductServiceImpl implements ProductService {
         Map<Long, List<String>> imagesMap = imageRepository.findAllByProductIdIn(productIds).stream()
                 .collect(Collectors.groupingBy(
                         image -> image.getProduct().getId(),
-                        Collectors.mapping(Image::getImageUrl, Collectors.toList())
+                        Collectors.mapping(Image::getImageUrl, toList())
                 ));
 
         List<ProductResponseDTO> dtoList = productsPage.stream()
@@ -163,5 +167,58 @@ public class ProductServiceImpl implements ProductService {
         Product updatedProduct = productRepository.save(product);
 
         return productMappingService.mapEntityToProductResponsDTO(updatedProduct);
+    }
+
+    @Override
+    public List<ProductResponseDTO> getRecommendedProducts(Long productId) {
+        // Fetch the selected product by its ID
+        Product selectedProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        // Fetch all active products except the selected one
+        List<Product> allProducts = productRepository.findAllWithImagesAndAromas().stream()
+                .filter(Product::isActive)
+                .filter(p -> !Objects.equals(p.getId(), selectedProduct.getId()))
+                .toList();
+
+        // 1. Products with the same price as the selected product
+        List<Product> byPrice = allProducts.stream()
+                .filter(p -> p.getPrice() != null && p.getPrice().compareTo(selectedProduct.getPrice()) == 0)
+                .toList();
+
+        // 2. Products with the same title as the selected product
+        List<Product> byTitle = allProducts.stream()
+                .filter(p -> p.getTitle() != null && p.getTitle().equalsIgnoreCase(selectedProduct.getTitle()))
+                .toList();
+
+        // 3. The remaining products (not in price or title lists)
+        List<Product> others = allProducts.stream()
+                .filter(p -> !byPrice.contains(p) && !byTitle.contains(p))
+                .toList();
+
+        // Combine the three lists into one stream
+        List<Product> recommended = Stream.of(byPrice, byTitle, others)
+                .flatMap(List::stream)
+                .distinct() // remove duplicates
+                .limit(30)  // optional: limit to 30 products for the recommendation carousel
+                .toList();
+
+        // Fetch images for all recommended products in one query
+        Map<Long, List<String>> imagesMap = imageRepository.findAllByProductIdIn(
+                        recommended.stream().map(Product::getId).toList()
+                ).stream()
+                .collect(Collectors.groupingBy(
+                        image -> image.getProduct().getId(),
+                        Collectors.mapping(Image::getImageUrl, Collectors.toList())
+                ));
+
+        // Map products to DTOs and attach image URLs
+        return recommended.stream()
+                .map(product -> {
+                    ProductResponseDTO dto = productMappingService.mapEntityToProductResponsDTO(product);
+                    dto.setImageUrls(imagesMap.getOrDefault(product.getId(), List.of()));
+                    return dto;
+                })
+                .toList();
     }
 }
