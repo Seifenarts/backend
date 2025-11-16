@@ -14,7 +14,7 @@ import java.util.Set;
 @Getter
 @EqualsAndHashCode
 @NoArgsConstructor
-@Table(name = "product")
+@Table(name = "Role")
 public class Product {
 
     @Id
