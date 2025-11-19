@@ -20,3 +20,8 @@ spring:
 
 base:
   url: ${BASE_URL}
+
+key:
+  access: ${ACCESS_KEY}
+  refresh: ${REFRESH_KEY}
+
