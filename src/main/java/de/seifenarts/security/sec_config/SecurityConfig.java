@@ -1,5 +1,6 @@
 package de.seifenarts.security.sec_config;
 
+import de.seifenarts.security.sec_filter.TokenFilter;
 import de.seifenarts.service.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -13,11 +14,18 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+
+    private final TokenFilter filter;
+
+    public SecurityConfig(TokenFilter filter) {
+        this.filter = filter;
+    }
 
     @Bean
     public BCryptPasswordEncoder encoder() {
@@ -28,15 +36,17 @@ public class SecurityConfig {
     private UserService userService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, de.seifenarts.security.sec_config.CustomEntryPoint entryPoint) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .httpBasic(Customizer.withDefaults())
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .exceptionHandling(e -> e.authenticationEntryPoint(entryPoint))
                 .authorizeHttpRequests(x -> x
                         .requestMatchers("/products/**").permitAll()
                         .anyRequest().authenticated()
-                ).build();
+                )
+                .addFilterAfter(filter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
-
 }
