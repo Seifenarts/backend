@@ -20,6 +20,7 @@ public class ProductRequestDto {
     @NotBlank
     private String title;
 
+    @NotNull
     private BigDecimal price;
 
     @NotNull
@@ -44,6 +45,6 @@ public class ProductRequestDto {
 
     @Override
     public String toString() {
-        return String.format("Product: title - %s, price - %.2f, size - %s, deliveryPrice - %.2f, shortDescription - %s, fullDescription - %s, composition - %s", title, price, size, deliveryPrice, shortDescription, fullDescription, composition);
+        return String.format("Product: title - %s, price - %d, size - %s, deliveryPrice - %.2f, shortDescription - %s, fullDescription - %s, composition - %s", title, price, size, deliveryPrice, shortDescription, fullDescription, composition);
     }
 }

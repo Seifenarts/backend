@@ -65,12 +65,21 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Image> images = new HashSet<>();
 
-    @NotNull
     @Column(name = "active", columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean active = true;
 
+    @NotNull
+    @Column(name = "quantity")
+    private Integer quantity = 0;
+
+    @Column(name = "stock_status", columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean stockStatus = true;
+
     @Override
     public String toString() {
-        return String.format("Product: id - %d, title - %s, price - %.2f, size - %s, deliveryPrice - %.2f, shortDescription - %s, fullDescription - %s, composition - %s, active - %s", id, title, price, size, deliveryPrice, shortDescription, fullDescription, composition, active ? "Yes" : "No");
+        return String.format(
+                "Product: id=%d, title=%s, price=%.2f, size=%s, quantity=%d, stock=%s",
+                id, title, price, size, quantity, stockStatus ? "In stock" : "Out of stock"
+        );
     }
 }
