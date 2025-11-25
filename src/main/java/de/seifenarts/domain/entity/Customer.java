@@ -1,17 +1,20 @@
 package de.seifenarts.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.extern.apachecommons.CommonsLog;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Setter
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @Table(name = "customer")
 public class Customer {
@@ -27,13 +30,25 @@ public class Customer {
     @Column(name = "email")
     private String email;
 
-    @NotNull
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Order> orders;
+    @JsonIgnore
+    private Set<Order> orders = new HashSet<>();
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "phone")
+    private String phone;
 
     @Override
     public String toString() {
-        return String.format("Customer: id - %d, email - %s, orders - %s", id, email, orders);
+        return String.format("Customer: id %d, email %s, orders %d, name %s, phone %s",
+                id,
+                email,
+                orders != null ? orders.size() : 0,
+                name,
+                phone
+        );
     }
 
 }

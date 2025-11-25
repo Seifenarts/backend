@@ -15,7 +15,7 @@ import java.util.Set;
 @Entity
 @Setter
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @Table(name = "orders")
 public class Order {
@@ -28,7 +28,6 @@ public class Order {
 
     @NotNull
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
@@ -40,6 +39,9 @@ public class Order {
     @Column(name = "total_price")
     private BigDecimal totalPrice;
 
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+
     @NotBlank
     @Column(name = "first_name")
     private String firstName;
@@ -50,7 +52,7 @@ public class Order {
 
     @NotNull
     @Column(name = "zip_code")
-    private Long zipCode;
+    private String zipCode;
 
     @NotBlank
     @Column(name = "street")
@@ -68,9 +70,26 @@ public class Order {
     @JsonManagedReference
     private Set<OrderProduct> orderProducts = new HashSet<>();
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Payment> payments = new HashSet<>();
+
     @Override
     public String toString() {
-        return String.format("Order: id - %d, customer - %s, createdAt - %s, totalPrice - %.2f, firstName - %s, lastName - %s, zipCode - %d, street - %s, houseNumber - %s, city - %s", id, customer.getEmail(), createdAt, totalPrice, firstName, lastName, zipCode, street, houseNumber, city);
-    }
+        String customerEmail = customer != null ? customer.getEmail() : "null";
 
+        return String.format(
+                "Order: id - %d, customer - %s, createdAt - %s, totalPrice - %.2f, firstName - %s, lastName - %s, zipCode - %s, street - %s, houseNumber - %s, city - %s",
+                id,
+                customerEmail,
+                createdAt,
+                totalPrice,
+                firstName,
+                lastName,
+                zipCode,
+                street,
+                houseNumber,
+                city
+        );
+
+    }
 }
