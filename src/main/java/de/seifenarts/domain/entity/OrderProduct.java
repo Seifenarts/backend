@@ -38,7 +38,7 @@ public class OrderProduct {
 
     @NotNull
     @Column(name = "quantity")
-    private Long quantity;
+    private Integer quantity;
 
     @NotNull
     @Digits(integer = 4, fraction = 2)

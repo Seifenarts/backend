@@ -66,6 +66,9 @@ public class Order {
     @Column(name = "city")
     private String city;
 
+    @Enumerated(EnumType.STRING)
+    private DeliveryMethod deliveryMethod;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Set<OrderProduct> orderProducts = new HashSet<>();
@@ -78,7 +81,7 @@ public class Order {
         String customerEmail = customer != null ? customer.getEmail() : "null";
 
         return String.format(
-                "Order: id - %d, customer - %s, createdAt - %s, totalPrice - %.2f, firstName - %s, lastName - %s, zipCode - %s, street - %s, houseNumber - %s, city - %s",
+                "Order: id - %d, customer - %s, createdAt - %s, totalPrice - %.2f, firstName - %s, lastName - %s, zipCode - %s, street - %s, houseNumber - %s, city - %s, deliveryMethod - %s",
                 id,
                 customerEmail,
                 createdAt,
@@ -88,7 +91,8 @@ public class Order {
                 zipCode,
                 street,
                 houseNumber,
-                city
+                city,
+                deliveryMethod
         );
 
     }

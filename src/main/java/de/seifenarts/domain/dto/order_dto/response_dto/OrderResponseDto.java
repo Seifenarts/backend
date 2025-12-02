@@ -1,5 +1,6 @@
 package de.seifenarts.domain.dto.order_dto.response_dto;
 
+import de.seifenarts.domain.entity.DeliveryMethod;
 import de.seifenarts.domain.entity.OrderStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,6 +17,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode
 public class OrderResponseDto {
+
+    @NotNull
+    private Long customerId;
 
     @NotNull
     private BigDecimal totalPrice;
@@ -44,18 +48,20 @@ public class OrderResponseDto {
     @NotBlank
     private String city;
 
+    private DeliveryMethod deliveryMethod;
+
     @Override
     public String toString() {
-        return "OrderResponseDto{" +
-                "totalPrice=" + totalPrice +
-                ", createdAt=" + createdAt +
-                ", status=" + status +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", zipCode='" + zipCode + '\'' +
-                ", street='" + street + '\'' +
-                ", houseNumber='" + houseNumber + '\'' +
-                ", city='" + city + '\'' +
-                '}';
+        return String.format("Order: customer - %s, totalPrice - - %.2f, firstName - %s, lastName - %s, zipCode - %s, street - %s, houseNumber - %s, city - %s, deliveryMethod - %s",
+                customerId,
+                totalPrice,
+                firstName,
+                lastName,
+                zipCode,
+                street,
+                houseNumber,
+                city,
+                deliveryMethod
+        );
     }
 }

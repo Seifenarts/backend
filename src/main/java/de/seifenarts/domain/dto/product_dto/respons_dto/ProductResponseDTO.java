@@ -1,9 +1,6 @@
 package de.seifenarts.domain.dto.product_dto.respons_dto;
 
 import de.seifenarts.domain.entity.Size;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

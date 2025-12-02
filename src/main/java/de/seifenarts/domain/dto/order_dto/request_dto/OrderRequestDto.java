@@ -1,6 +1,8 @@
 package de.seifenarts.domain.dto.order_dto.request_dto;
 
-import de.seifenarts.domain.entity.Customer;
+
+import de.seifenarts.domain.dto.OrderProduct.request_order_product_dto.OrderProductRequest;
+import de.seifenarts.domain.entity.DeliveryMethod;
 import de.seifenarts.domain.entity.OrderStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,11 +19,13 @@ import java.math.BigDecimal;
 @EqualsAndHashCode
 public class OrderRequestDto {
 
-    @NotNull
-    private Long customerId;
+    private Long userId;
 
     @NotNull
-    private BigDecimal totalPrice;
+    private List<OrderProductRequest> products;
+
+    @NotNull
+    private Long customerId;
 
     private OrderStatus status = OrderStatus.CREATED;
 
@@ -43,19 +47,19 @@ public class OrderRequestDto {
     @NotBlank
     private String city;
 
+    private DeliveryMethod deliveryMethod;
+
     @Override
     public String toString() {
-        return "OrderRequestDto{" +
-                "customerId=" + customerId +
-                ", totalPrice=" + totalPrice +
-                ", status=" + status +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", zipCode='" + zipCode + '\'' +
-                ", street='" + street + '\'' +
-                ", houseNumber='" + houseNumber + '\'' +
-                ", city='" + city + '\'' +
-                '}';
+        return String.format("Order: customer - %s, firstName - %s, lastName - %s, zipCode - %s, street - %s, houseNumber - %s, city - %s, deliveryMethod - %s",
+                customerId,
+                firstName,
+                lastName,
+                zipCode,
+                street,
+                houseNumber,
+                city,
+                deliveryMethod
+        );
     }
-
-}
+    }

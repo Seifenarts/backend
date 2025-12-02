@@ -4,7 +4,6 @@ import de.seifenarts.domain.dto.order_dto.request_dto.OrderRequestDto;
 import de.seifenarts.domain.dto.order_dto.response_dto.OrderResponseDto;
 import de.seifenarts.service.interfaces.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 
 import org.springframework.web.bind.annotation.*;
 
