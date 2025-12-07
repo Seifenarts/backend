@@ -1,4 +1,4 @@
-package de.seifenarts.domain.dto.OrderProduct.request_order_product_dto;
+package de.seifenarts.domain.dto.orderProduct_dto.request_order_product_dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;

@@ -1,7 +1,8 @@
 package de.seifenarts.domain.dto.order_dto.request_dto;
 
 
-import de.seifenarts.domain.dto.OrderProduct.request_order_product_dto.OrderProductRequest;
+import de.seifenarts.domain.dto.customer_dto.request_dto.CustomerRequestDto;
+import de.seifenarts.domain.dto.orderProduct_dto.request_order_product_dto.OrderProductRequest;
 import de.seifenarts.domain.entity.DeliveryMethod;
 import de.seifenarts.domain.entity.OrderStatus;
 import jakarta.validation.constraints.NotBlank;
@@ -25,41 +26,18 @@ public class OrderRequestDto {
     private List<OrderProductRequest> products;
 
     @NotNull
-    private Long customerId;
+    private CustomerRequestDto customer;
 
     private OrderStatus status = OrderStatus.CREATED;
 
-    @NotBlank
-    private String firstName;
-
-    @NotBlank
-    private String lastName;
-
-    @NotBlank
-    private String zipCode;
-
-    @NotBlank
-    private String street;
-
-    @NotBlank
-    private String houseNumber;
-
-    @NotBlank
-    private String city;
-
-    private DeliveryMethod deliveryMethod;
-
     @Override
     public String toString() {
-        return String.format("Order: customer - %s, firstName - %s, lastName - %s, zipCode - %s, street - %s, houseNumber - %s, city - %s, deliveryMethod - %s",
-                customerId,
-                firstName,
-                lastName,
-                zipCode,
-                street,
-                houseNumber,
-                city,
-                deliveryMethod
-        );
+        return "OrderRequestDto{" +
+                "userId=" + userId +
+                ", products=" + products +
+                ", customer=" + customer +
+                ", status=" + status +
+                '}';
     }
-    }
+
+}

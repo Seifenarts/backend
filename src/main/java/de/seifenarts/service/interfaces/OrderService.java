@@ -7,7 +7,7 @@ public interface OrderService {
 
 Long addNewOrder(OrderRequestDto orderRequestDto);
 
-OrderResponseDto updateOrder (Long orderId, OrderRequestDto orderRequestDto);
+//OrderResponseDto updateOrder (Long orderId, OrderRequestDto orderRequestDto);
 
 void deleteOrder (Long orderId);
 
