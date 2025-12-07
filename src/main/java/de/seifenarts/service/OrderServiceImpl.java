@@ -92,8 +92,6 @@ public class OrderServiceImpl implements OrderService {
         order.getOrderProducts().add(op);
     }
 
-
-
     private BigDecimal calculateOrderTotal(Order order) {
         return order.getOrderProducts().stream()
                 .map(OrderProduct::getTotalPrice)
