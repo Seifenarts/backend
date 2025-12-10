@@ -87,7 +87,12 @@ public class OrderServiceImpl implements OrderService {
         op.setOrder(order);
         op.setProduct(product);
         op.setQuantity(req.getQuantity());
-        op.setTotalPrice(product.getPrice().multiply(BigDecimal.valueOf(req.getQuantity())));
+        BigDecimal itemPrice = product.getPrice();
+
+        if (order.getDeliveryMethod() == DeliveryMethod.DELIVERY) {
+            itemPrice = itemPrice.add(product.getDeliveryPrice());
+        }
+        op.setTotalPrice(itemPrice.multiply(BigDecimal.valueOf(req.getQuantity())));
 
         order.getOrderProducts().add(op);
     }
