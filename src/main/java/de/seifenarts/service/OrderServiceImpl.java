@@ -11,6 +11,7 @@ import de.seifenarts.repository.OrderRepository;
 import de.seifenarts.repository.ProductRepository;
 import de.seifenarts.service.interfaces.CustomerService;
 import de.seifenarts.service.interfaces.OrderService;
+import de.seifenarts.service.interfaces.ProductService;
 import de.seifenarts.service.mapping.OrderMappingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,14 +27,15 @@ public class OrderServiceImpl implements OrderService {
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
     private final CustomerService customerService;
+    private final ProductService productService;
 
-    public OrderServiceImpl(OrderRepository orderRepository, OrderMappingService orderMappingService, CustomerRepository customerRepository, ProductRepository productRepository, CustomerService customerService) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderMappingService orderMappingService, CustomerRepository customerRepository, ProductRepository productRepository, CustomerService customerService, ProductService productService) {
         this.orderRepository = orderRepository;
         this.orderMappingService = orderMappingService;
         this.customerRepository = customerRepository;
         this.productRepository = productRepository;
         this.customerService = customerService;
-
+        this.productService = productService;
     }
 
     @Override
@@ -59,6 +61,9 @@ public class OrderServiceImpl implements OrderService {
         if (unsaved.getStatus() == null) {
             unsaved.setStatus(OrderStatus.CREATED);
         }
+
+
+
         unsaved.setTotalPrice(BigDecimal.ZERO);
 
         if (dto.getProducts() == null || dto.getProducts().isEmpty()) {

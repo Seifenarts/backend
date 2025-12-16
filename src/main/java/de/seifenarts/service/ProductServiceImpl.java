@@ -222,15 +222,22 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
     }
 
-    private Product reserveProduct(Product product, Integer amount) {
-        decreaseQuantity(product, amount);
-        return productRepository.save(product);
+    @Override
+    public void reserveProduct(Long productId, Integer amount) {
+        Product reserveProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        decreaseQuantity(reserveProduct, amount);
+        setStockStatus(reserveProduct);
+        productRepository.save(reserveProduct);
     }
 
-
-    private Product restoreProduct(Product product, Integer amount) {
-        increaseQuantity(product, amount);
-        return productRepository.save(product);
+    @Override
+    public void restoreProduct(Long productId, Integer amount) {
+        Product restoreProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        increaseQuantity(restoreProduct, amount);
+        setStockStatus(restoreProduct);
+        productRepository.save(restoreProduct);
     }
 
 
@@ -244,7 +251,6 @@ public class ProductServiceImpl implements ProductService {
                     "Not enough quantity for product id=" + product.getId()
             );
         }
-
         product.setQuantity(product.getQuantity() - amount);
         return product;
     }
@@ -253,8 +259,15 @@ public class ProductServiceImpl implements ProductService {
         if (amount <= 0) {
             throw new IllegalArgumentException("Amount must be greater than 0");
         }
-
         product.setQuantity(product.getQuantity() + amount);
         return product;
+    }
+
+    private void setStockStatus(Product product) {
+        if (product.getQuantity() == 0) {
+            product.setStockStatus(false);
+        } else {
+            product.setStockStatus(true);
+        }
     }
 }

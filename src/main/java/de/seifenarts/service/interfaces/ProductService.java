@@ -22,4 +22,7 @@ public interface ProductService {
 
     List<ProductResponseDTO> getRecommendedProducts(Long productId);
 
+    void reserveProduct(Long productId, Integer amount);
+
+    void restoreProduct(Long productId, Integer amount);
 }
