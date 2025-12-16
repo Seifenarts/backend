@@ -6,15 +6,14 @@ import de.seifenarts.domain.dto.order_dto.request_dto.OrderRequestDto;
 import de.seifenarts.domain.dto.order_dto.response_dto.OrderResponseDto;
 import de.seifenarts.domain.entity.*;
 import de.seifenarts.repository.CustomerRepository;
-import de.seifenarts.repository.OrderProductRepository;
 import de.seifenarts.repository.OrderRepository;
 import de.seifenarts.repository.ProductRepository;
 import de.seifenarts.service.interfaces.CustomerService;
 import de.seifenarts.service.interfaces.OrderService;
 import de.seifenarts.service.interfaces.ProductService;
 import de.seifenarts.service.mapping.OrderMappingService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -37,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
         this.customerService = customerService;
         this.productService = productService;
     }
-
+    @Transactional
     @Override
     public Long addNewOrder(OrderRequestDto dto) {
 
@@ -62,8 +61,6 @@ public class OrderServiceImpl implements OrderService {
             unsaved.setStatus(OrderStatus.CREATED);
         }
 
-
-
         unsaved.setTotalPrice(BigDecimal.ZERO);
 
         if (dto.getProducts() == null || dto.getProducts().isEmpty()) {
@@ -75,7 +72,7 @@ public class OrderServiceImpl implements OrderService {
         dto.getProducts().forEach(req -> addOrderProduct(savedOrder, req));
 
         savedOrder.setTotalPrice(calculateOrderTotal(savedOrder));
-
+        savedOrder.getOrderProducts().forEach(pro -> productService.reserveProduct(pro.getProduct().getId(), pro.getQuantity()) );
         orderRepository.save(savedOrder);
         return savedOrder.getId();
     }
@@ -100,6 +97,7 @@ public class OrderServiceImpl implements OrderService {
         op.setTotalPrice(itemPrice.multiply(BigDecimal.valueOf(req.getQuantity())));
 
         order.getOrderProducts().add(op);
+
     }
 
     private BigDecimal calculateOrderTotal(Order order) {
