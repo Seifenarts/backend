@@ -2,6 +2,7 @@ package de.seifenarts.service.interfaces;
 
 import de.seifenarts.domain.dto.product_dto.request_dto.ProductRequestDto;
 import de.seifenarts.domain.dto.product_dto.respons_dto.ProductResponseDTO;
+import de.seifenarts.domain.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -20,4 +21,5 @@ public interface ProductService {
     ProductResponseDTO updateProduct (Long productId, ProductRequestDto productRequestDto);
 
     List<ProductResponseDTO> getRecommendedProducts(Long productId);
+
 }

@@ -221,4 +221,40 @@ public class ProductServiceImpl implements ProductService {
                 })
                 .toList();
     }
+
+    private Product reserveProduct(Product product, Integer amount) {
+        decreaseQuantity(product, amount);
+        return productRepository.save(product);
+    }
+
+
+    private Product restoreProduct(Product product, Integer amount) {
+        increaseQuantity(product, amount);
+        return productRepository.save(product);
+    }
+
+
+    private Product decreaseQuantity(Product product, Integer amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than 0");
+        }
+
+        if (product.getQuantity() < amount) {
+            throw new IllegalStateException(
+                    "Not enough quantity for product id=" + product.getId()
+            );
+        }
+
+        product.setQuantity(product.getQuantity() - amount);
+        return product;
+    }
+
+    private Product increaseQuantity(Product product, Integer amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than 0");
+        }
+
+        product.setQuantity(product.getQuantity() + amount);
+        return product;
+    }
 }
