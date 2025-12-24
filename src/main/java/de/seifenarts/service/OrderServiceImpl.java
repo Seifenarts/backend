@@ -1,7 +1,7 @@
 package de.seifenarts.service;
 
 import de.seifenarts.domain.composite_key.OrderProductId;
-import de.seifenarts.domain.dto.orderProduct_dto.request_order_product_dto.OrderProductRequest;
+import de.seifenarts.domain.dto.orderProduct_dto.request_dto.OrderProductRequestDto;
 import de.seifenarts.domain.dto.order_dto.request_dto.OrderRequestDto;
 import de.seifenarts.domain.dto.order_dto.response_dto.OrderResponseDto;
 import de.seifenarts.domain.entity.*;
@@ -77,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
         return savedOrder.getId();
     }
 
-    private void addOrderProduct(Order order, OrderProductRequest req) {
+    private void addOrderProduct(Order order, OrderProductRequestDto req) {
 
         Product product = productRepository.findById(req.getId())
                 .orElseThrow(() -> new RuntimeException("Product not found: " + req.getId()));

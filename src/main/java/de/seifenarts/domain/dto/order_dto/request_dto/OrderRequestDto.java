@@ -2,7 +2,7 @@ package de.seifenarts.domain.dto.order_dto.request_dto;
 
 
 import de.seifenarts.domain.dto.customer_dto.request_dto.CustomerRequestDto;
-import de.seifenarts.domain.dto.orderProduct_dto.request_order_product_dto.OrderProductRequest;
+import de.seifenarts.domain.dto.orderProduct_dto.request_dto.OrderProductRequestDto;
 import de.seifenarts.domain.entity.OrderStatus;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
@@ -21,7 +21,7 @@ public class OrderRequestDto {
     private Long userId;
 
     @NotNull
-    private List<OrderProductRequest> products;
+    private List<OrderProductRequestDto> products;
 
     @NotNull
     private CustomerRequestDto customer;
