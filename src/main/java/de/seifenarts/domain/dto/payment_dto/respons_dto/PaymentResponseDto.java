@@ -3,9 +3,6 @@ package de.seifenarts.domain.dto.payment_dto.respons_dto;
 import de.seifenarts.domain.entity.PaymentMethod;
 import de.seifenarts.domain.entity.PaymentStatus;
 import de.seifenarts.domain.entity.Provider;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -23,6 +20,9 @@ public class PaymentResponseDto {
 
     @NotNull
     private Long id;
+
+    @NotNull
+    private Long orderId;
 
     private Provider provider;
 

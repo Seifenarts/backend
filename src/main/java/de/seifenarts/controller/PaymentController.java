@@ -1,15 +1,9 @@
 package de.seifenarts.controller;
-
-import de.seifenarts.domain.dto.order_dto.request_dto.OrderRequestDto;
 import de.seifenarts.domain.dto.payment_dto.request_dto.PaymentRequestDto;
 import de.seifenarts.domain.dto.payment_dto.respons_dto.PaymentResponseDto;
-import de.seifenarts.repository.PaymentRepository;
-import de.seifenarts.service.PaymentServiceImpl;
 import de.seifenarts.service.interfaces.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.nio.file.Path;
 
 @RestController
 @RequestMapping("/payment")

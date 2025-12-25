@@ -4,12 +4,14 @@ import de.seifenarts.domain.composite_key.OrderProductId;
 import de.seifenarts.domain.dto.orderProduct_dto.request_dto.OrderProductRequestDto;
 import de.seifenarts.domain.dto.order_dto.request_dto.OrderRequestDto;
 import de.seifenarts.domain.dto.order_dto.response_dto.OrderResponseDto;
+import de.seifenarts.domain.dto.payment_dto.respons_dto.PaymentResponseDto;
 import de.seifenarts.domain.entity.*;
 import de.seifenarts.repository.CustomerRepository;
 import de.seifenarts.repository.OrderRepository;
 import de.seifenarts.repository.ProductRepository;
 import de.seifenarts.service.interfaces.CustomerService;
 import de.seifenarts.service.interfaces.OrderService;
+import de.seifenarts.service.interfaces.PaymentService;
 import de.seifenarts.service.interfaces.ProductService;
 import de.seifenarts.service.mapping.OrderMappingService;
 import org.springframework.stereotype.Service;
@@ -27,15 +29,18 @@ public class OrderServiceImpl implements OrderService {
     private final ProductRepository productRepository;
     private final CustomerService customerService;
     private final ProductService productService;
+    private final PaymentService paymentService;
 
-    public OrderServiceImpl(OrderRepository orderRepository, OrderMappingService orderMappingService, CustomerRepository customerRepository, ProductRepository productRepository, CustomerService customerService, ProductService productService) {
+    public OrderServiceImpl(OrderRepository orderRepository, OrderMappingService orderMappingService, CustomerRepository customerRepository, ProductRepository productRepository, CustomerService customerService, ProductService productService, PaymentService paymentService) {
         this.orderRepository = orderRepository;
         this.orderMappingService = orderMappingService;
         this.customerRepository = customerRepository;
         this.productRepository = productRepository;
         this.customerService = customerService;
         this.productService = productService;
+        this.paymentService = paymentService;
     }
+
     @Transactional
     @Override
     public Long addNewOrder(OrderRequestDto dto) {
@@ -72,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
         dto.getProducts().forEach(req -> addOrderProduct(savedOrder, req));
 
         savedOrder.setTotalPrice(calculateOrderTotal(savedOrder));
-        savedOrder.getOrderProducts().forEach(pro -> productService.reserveProduct(pro.getProduct().getId(), pro.getQuantity()) );
+        savedOrder.getOrderProducts().forEach(pro -> productService.reserveProduct(pro.getProduct().getId(), pro.getQuantity()));
         orderRepository.save(savedOrder);
         return savedOrder.getId();
     }
@@ -162,4 +167,47 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         return orderMappingService.mapEntityToResponseDto(order);
     }
+
+    @Override
+    public void markOrderPaid(Long orderId, Long paymentId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        if (order.getStatus() == OrderStatus.PAID) {
+            return;
+        }
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new RuntimeException("Order is cancelled: " + order.getId());
+        }
+
+        PaymentResponseDto payment = paymentService.getPaymentById(paymentId);
+
+        if (!payment.getOrderId().equals(orderId)) {
+            throw new RuntimeException("Payment does not belong to order");
+        }
+
+        if (payment.getStatus() != PaymentStatus.CAPTURED) {
+            throw new RuntimeException("Payment is not captured. Current status: " + payment.getStatus());
+        }
+
+        order.setStatus(OrderStatus.PAID);
+        orderRepository.save(order);
+    }
+
+    @Override
+    public void markOrderCancelled(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            return;
+        }
+
+        if (order.getStatus() == OrderStatus.PAID) {
+            throw new RuntimeException("Paid order must be refunded first");
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+    }
+
 }
